@@ -1,0 +1,11 @@
+{
+  "Culture": "en",
+  "Texts": {
+    "AppName": "EventHub",
+    "Menu:Home": "Home",
+    "LongWelcomeMessage": "Welcome to the application. This is a startup project based on the ABP framework. For more information visit",
+    "Welcome": "Welcome",
+    "EventHub:EndTimeCantBeEarlierThanStartTime": "Event end time can not be earlier than the start time.",
+    "EventHub:OrganizationNameAlreadyExists": "This organization name is already exists."
+  }
+}
