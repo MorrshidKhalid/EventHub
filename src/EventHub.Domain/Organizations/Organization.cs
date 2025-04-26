@@ -30,6 +30,8 @@ public class Organization : FullAuditedAggregateRoot<Guid>
     public OrganizationPlanType PlanType { get; private set; }
     
     public DateTime? PaidEnrollmentEndDate { get; private set; }
+    
+    public DateTime TrialPeriod { get; private set; }
 
     protected Organization()
     {
@@ -44,6 +46,7 @@ public class Organization : FullAuditedAggregateRoot<Guid>
         SetDisplayName(displayName);
         SetDescription(description);
         SetFreeToPlanType();
+        SetTryDate();
     }
 
     internal Organization SetOwnerUserId(Guid ownerUserId)
@@ -100,4 +103,15 @@ public class Organization : FullAuditedAggregateRoot<Guid>
         return this;
     }
 
+    private Organization SetTryDate()
+    {
+        TrialPeriod = DateTime.Now;
+        if (PlanType == OrganizationPlanType.Free)
+        {
+            TrialPeriod = TrialPeriod.AddDays(OrganizationConsts.MaxFreeTrialDays);
+        }
+        
+        TrialPeriod = TrialPeriod.AddDays(OrganizationConsts.MaxPremiumTrialDays);
+        return this;
+    }
 }

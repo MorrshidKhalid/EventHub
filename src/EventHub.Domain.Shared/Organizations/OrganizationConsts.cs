@@ -22,4 +22,7 @@ public static class OrganizationConsts
     public const int MaxInstagramUsernameLength = 24;
 
     public const int MaxMediumUsernameLength = 24;
+
+    public const short MaxFreeTrialDays = 60;
+    public const short MaxPremiumTrialDays = 14;
 }

@@ -32,7 +32,7 @@ public class OrganizationManager : DomainService
                 .WithData(nameof(name), name);
         }
         
-        return new(
+        return new Organization(
             GuidGenerator.Create(),
             ownerUserId,
             name,

@@ -4,6 +4,7 @@ using EventHub.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 
@@ -12,9 +13,11 @@ using Volo.Abp.EntityFrameworkCore;
 namespace EventHub.Migrations
 {
     [DbContext(typeof(EventHubDbContext))]
-    partial class EventHubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250426085328_Added_Organization_Table")]
+    partial class Added_Organization_Table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -110,9 +113,6 @@ namespace EventHub.Migrations
 
                     b.Property<byte>("PlanType")
                         .HasColumnType("tinyint");
-
-                    b.Property<DateTime>("TrialPeriod")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("TwitterUsername")
                         .HasMaxLength(24)

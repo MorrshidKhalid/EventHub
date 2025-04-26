@@ -20,15 +20,15 @@ public class OrganizationConfiguration : IEntityTypeConfiguration<Organization>
         
         builder.Property(x => x.Description)
             .IsRequired()
-            .HasMaxLength(OrganizationConsts.MaxNameLength);
+            .HasMaxLength(OrganizationConsts.MaxDescriptionNameLength);
         
         builder.Property(x => x.DisplayName)
             .IsRequired()
-            .HasMaxLength(OrganizationConsts.MaxNameLength);
+            .HasMaxLength(OrganizationConsts.MaxDisplayNameLength);
         
         builder.Property(x => x.Website)
             .IsRequired(false)
-            .HasMaxLength(OrganizationConsts.MaxNameLength);
+            .HasMaxLength(OrganizationConsts.MaxWebsiteLength);
         
         builder.Property(x => x.TwitterUsername)
             .IsRequired(false)
