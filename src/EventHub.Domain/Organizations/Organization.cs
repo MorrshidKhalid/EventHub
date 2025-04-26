@@ -15,21 +15,21 @@ public class Organization : FullAuditedAggregateRoot<Guid>
     
     public string Description { get; private set; }
     
-    public string Website { get; set; }
+    public string? Website { get; set; }
 
-    public string TwitterUsername { get; set; }
+    public string? TwitterUsername { get; set; }
 
-    public string GitHubUsername { get; set; }
+    public string? GitHubUsername { get; set; }
 
-    public string FacebookUsername { get; set; }
+    public string? FacebookUsername { get; set; }
 
-    public string InstagramUsername { get; set; }
+    public string? InstagramUsername { get; set; }
 
-    public string MediumUsername { get; set; }
+    public string? MediumUsername { get; set; }
     
-    public OrganizationPlanType PlanType { get; set; }
+    public OrganizationPlanType PlanType { get; private set; }
     
-    public DateTime? PaidEnrollmentEndDate { get; set; }
+    public DateTime? PaidEnrollmentEndDate { get; private set; }
 
     protected Organization()
     {
@@ -58,13 +58,13 @@ public class Organization : FullAuditedAggregateRoot<Guid>
         return this;
     }
     
-    internal Organization SetDisplayName(string displayName)
+    public Organization SetDisplayName(string displayName)
     {
         DisplayName = Check.NotNullOrWhiteSpace(displayName, nameof(DisplayName), OrganizationConsts.MaxDisplayNameLength, OrganizationConsts.MinDisplayNameLength);
         return this;
     }
     
-    internal Organization SetDescription(string description)
+    public Organization SetDescription(string description)
     {
         Description = Check.NotNullOrWhiteSpace(description, nameof(Description), OrganizationConsts.MaxDescriptionNameLength, OrganizationConsts.MinDescriptionNameLength);
         return this;

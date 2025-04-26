@@ -1,4 +1,6 @@
+using System;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 
 namespace EventHub.Organizations;
@@ -6,4 +8,12 @@ namespace EventHub.Organizations;
 public interface IOrganizationAppService : IApplicationService
 {
     Task<OrganizationDto> CreateAsync(CreateOrganizationDto input);
+    
+    Task<PagedResultDto<OrganizationInListDto>> GetListAsync(OrganizationInListFilterDto input);
+    
+    Task<ListResultDto<OrganizationDto>> GetAllAsync();
+    
+    Task<OrganizationProfileDto> GetOrganizationProfileAsync(string name);
+
+    Task UpdateAsync(Guid id, UpdateOrganizationDto input);
 }
