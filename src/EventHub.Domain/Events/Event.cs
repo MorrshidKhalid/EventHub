@@ -1,8 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Linq;
+using EventHub.Exceptions;
 using EventHub.Tracks;
-using EventHub.Utility;
 using Volo.Abp;
+using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 
 namespace EventHub.Events;
@@ -10,6 +14,10 @@ namespace EventHub.Events;
 public class Event : FullAuditedAggregateRoot<Guid>
 {
     public Guid OrganizationId { get; private set; }
+    
+    public string UrlCode { get; private set; }
+    
+    public string Url { get; private set; }
 
     public string Title { get; private set; }
 
@@ -18,16 +26,32 @@ public class Event : FullAuditedAggregateRoot<Guid>
     public DateTime EndTime { get; private set; }
 
     public string Description { get; private set; }
-
+    
+    public bool IsOnline { get; private set; }
+    
+    public string OnlineLink { get; private set; }
+    
+    public Guid CountryId { get; private set; }
+    
+    public string CountryName { get; private set; }
+    
+    public string City { get; private set; }
+    
     public string? Language { get; private set; }
 
     public int? Capacity { get; private set; }
 
-    public bool IsOnline { get; private set; }
-
+    public bool IsRemindingEmailSent { get; private set; }
+    
+    public bool IsEmailSentToMembers { get; set; }
+    
+    public int TimingChangeCount  { get; set; }
+    
+    public bool IsTimingChangeEmailSent { get; set; }
+    
     public bool IsDraft { get; private set; }
 
-    public ICollection<Track?> Trackes { get; set; }
+    public ICollection<Track> Tracks { get; set; }
 
     private Event()
     {
@@ -35,24 +59,27 @@ public class Event : FullAuditedAggregateRoot<Guid>
     }
 
     internal Event(
-        Guid id, Guid organizationId,
-        string title, DateTime startDateTime,
-        DateTime endDateTime, string description) 
+        Guid id,
+        Guid organizationId,
+        string urlCode,
+        string title,
+        DateTime startTime,
+        DateTime endTime,
+        string description) 
         : base(id)
     {
-        SetOrganizationId(organizationId);
+        OrganizationId = organizationId;
+        UrlCode = Check.NotNullOrWhiteSpace(urlCode, nameof(urlCode), EventConsts.UrlCodeLength, EventConsts.UrlCodeLength);
+        
         SetTitle(title);
-        SetTime(startDateTime, endDateTime);
         SetDescription(description);
+        SetTimeInternal(startTime, endTime);
+        
+        Publish(false);
+        
+        Tracks = new Collection<Track>();
     }
-
-
-    internal Event SetOrganizationId(Guid organizationId)
-    {
-        OrganizationId = Check.NotNull(organizationId, nameof(organizationId));
-        return this;
-    }
-
+    
     public Event SetTitle(string title)
     {
         Title = Check.NotNullOrWhiteSpace(title, nameof(title), EventConsts.MaxTitleLength, EventConsts.MinTitleLength);
@@ -65,19 +92,45 @@ public class Event : FullAuditedAggregateRoot<Guid>
         return this;
     }
     
-    public Event SetTime(DateTime startTime, DateTime endTime)
+    private Event SetTimeInternal(DateTime startTime, DateTime endTime)
     {
-        if (startTime == StartTime && endTime == EndTime)
+        if (startTime > endTime)
         {
-            return this;
+            new HandleGlobalException(new EndTimeEarlierThanStartTimeException()).GenerateExceptionCode(
+                EventHubDomainErrorCodes.EndTimeCantBeEarlierThanStartTime,
+                endTime.ToString(CultureInfo.InvariantCulture));
         }
         
-        DateValidation.IsValidTime(startTime, endTime);
-        
+
         StartTime = startTime;
         EndTime = endTime;
 
         return this;
+    }
+
+    public Event Publish(bool isPublished = true)
+    {
+        IsDraft = !isPublished;
+
+        return this;
+    }
+
+    public bool IsLive(DateTime now) => now.IsBetween(StartTime, EndTime);
+
+    private Track GetTracks(Guid trackId)
+    {
+        return Tracks.FirstOrDefault(t => t.Id == trackId) 
+               ?? throw new EntityNotFoundException(typeof(Track), trackId);
+    }
+
+    public void CheckIfValidSessionTime(DateTime startTime, DateTime endTime)
+    {
+        if (startTime < StartTime || endTime < StartTime)
+        {
+            new HandleGlobalException(new ValidateSessionException()).GenerateExceptionCode(
+                    EventHubDomainErrorCodes.SessionTimeShouldBeInTheEventTime,
+                    $"s:{startTime} e:{endTime}");
+        }
     }
     
     //AddTrack

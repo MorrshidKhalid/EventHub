@@ -7,4 +7,6 @@ public static class EventConsts
     
     public const int MaxDescriptionLength = 50;
     public const int MinDescriptionLength = 2000;
+
+    public const int UrlCodeLength = 8;
 }

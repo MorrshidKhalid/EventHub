@@ -2,7 +2,7 @@ using Volo.Abp;
 
 namespace EventHub.Exceptions;
 
-public class EndTimeEarlierThanStartTimeException : IHandelGlobalException
+public class ValidateSessionException : IHandelGlobalException
 {
     public void GenerateExceptionCode(string message, string data)
     {

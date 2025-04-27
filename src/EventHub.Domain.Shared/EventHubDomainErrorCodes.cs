@@ -4,4 +4,5 @@ public static class EventHubDomainErrorCodes
 {
     public const string EndTimeCantBeEarlierThanStartTime = "EventHub:EndTimeCantBeEarlierThanStartTime";
     public const string? OrganizationNameAlreadyExists = "EventHub:OrganizationNameAlreadyExists";
+    public const string SessionTimeShouldBeInTheEventTime = "EventHub:SessionTimeShouldBeInTheEventTime";
 }
