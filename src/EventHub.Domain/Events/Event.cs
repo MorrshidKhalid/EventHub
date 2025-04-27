@@ -119,6 +119,26 @@ public class Event : FullAuditedAggregateRoot<Guid>
         Tracks.Add(new Track(trackId, Id, name));
         return this;
     }
+
+    public Event UpdateTrack(Guid trackId, string name)
+    {
+        if (Tracks.Any(x => x.Name == name))
+        {
+            new HandleGlobalException(new TrackException()).GenerateExceptionCode(
+                EventHubDomainErrorCodes.TrackNameAlreadyExist, name);
+        }
+        
+        var track = Tracks.SingleOrDefault(x => x.Id == trackId);
+        if (track is null)
+        {
+            new HandleGlobalException(new TrackException()).GenerateExceptionCode(
+                EventHubDomainErrorCodes.TrackNotFound, trackId.ToString());
+        }
+        
+        track.SetName(name);
+
+        return this;
+    }
     
     public Event Publish(bool isPublished = true)
     {

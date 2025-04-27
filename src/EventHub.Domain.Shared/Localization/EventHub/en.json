@@ -8,6 +8,7 @@
     "EventHub:EndTimeCantBeEarlierThanStartTime": "Event end time can not be earlier than the start time.",
     "EventHub:OrganizationNameAlreadyExists": "This organization name is already exists.",
     "EventHub:SessionTimeShouldBeInTheEventTime": "Session time should be in the event time!",
-    "EventHub:TrackNameAlreadyExists": "Track name already exists!"
+    "EventHub:TrackNameAlreadyExists": "Track name already exists!",
+    "EventHub:TrackNotFound": "Track Not Found!"
   }
 }

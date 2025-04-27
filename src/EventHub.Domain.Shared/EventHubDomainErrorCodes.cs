@@ -8,4 +8,5 @@ public static class EventHubDomainErrorCodes
     public const string? OrganizationNameAlreadyExists = "EventHub:OrganizationNameAlreadyExists";
     public const string SessionTimeShouldBeInTheEventTime = "EventHub:SessionTimeShouldBeInTheEventTime";
     public const string TrackNameAlreadyExist = "EventHub:TrackNameAlreadyExists";
+    public const string TrackNotFound = "EventHub:TrackNotFound";
 }

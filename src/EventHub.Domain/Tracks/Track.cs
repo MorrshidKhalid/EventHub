@@ -27,4 +27,9 @@ public class Track : Entity<Guid>
 
         return this;
     }
+
+    public void SetName(string name)
+    {
+        throw new NotImplementedException();
+    }
 }
