@@ -108,6 +108,18 @@ public class Event : FullAuditedAggregateRoot<Guid>
         return this;
     }
 
+    public Event AddTrack(Track track)
+    {
+        if (Tracks.Any(x => x.Name == track.Name))
+        {
+            new HandleGlobalException(new TrackException()).GenerateExceptionCode(
+                EventHubDomainErrorCodes.TrackNameAlreadyExist, track.Name);
+        }
+        
+        
+        return this;
+    }
+    
     public Event Publish(bool isPublished = true)
     {
         IsDraft = !isPublished;
