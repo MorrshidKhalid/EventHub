@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EventHub.Organizations.Memberships;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Users;
@@ -10,7 +11,8 @@ namespace EventHub.Organizations;
 
 public class OrganizationAppService(
     OrganizationManager organizationManager,
-    IRepository<Organization, Guid> organizationRepository)
+    IRepository<Organization, Guid> organizationRepository,
+    IOrganizationMembershipRepository organizationMembershipRepository)
     : EventHubAppService, IOrganizationAppService
 {
     public async Task<OrganizationDto> CreateAsync(CreateOrganizationDto input)
@@ -35,20 +37,28 @@ public class OrganizationAppService(
 
     public async Task<PagedResultDto<OrganizationInListDto>> GetListAsync(OrganizationInListFilterDto input)
     {
-        var orgQueryable = await organizationRepository.GetQueryableAsync();
-
-        var query = orgQueryable;
+        var organizationQueryable = await organizationRepository.GetQueryableAsync();
+        var organizationMemberQueryable = await organizationMembershipRepository.GetQueryableAsync();
+        
+        var query = organizationQueryable;
         
         if (input.RegisteredUserId.HasValue)
         {
-            //var registeredOrganizations = 
+            var registeredOrganizations = organizationMemberQueryable
+                .Where(organizationMember => organizationMember.UserId == input.RegisteredUserId.Value)
+                .Select(organizationMember => organizationMember.OrganizationId);
+            
+            var orgIds = await AsyncExecuter.ToListAsync(registeredOrganizations);
+            query = query.Where(organizationMember => orgIds.Contains(organizationMember.Id));
         }
         
-        var count = await AsyncExecuter.CountAsync(query);
-        var result = await AsyncExecuter.ToListAsync(query);
-        var orgList = ObjectMapper.Map<List<Organization>, List<OrganizationInListDto>>(result);
+        var totalCount = await AsyncExecuter.CountAsync(query);
+        query = query.PageBy(input);
         
-        return new PagedResultDto<OrganizationInListDto>(count, orgList);
+        var organizationDto = ObjectMapper
+            .Map<List<Organization>, List<OrganizationInListDto>>(await AsyncExecuter.ToListAsync(query));
+        
+        return new PagedResultDto<OrganizationInListDto>(totalCount, organizationDto);
     }
 
     public async Task<ListResultDto<OrganizationDto>> GetAllAsync()
@@ -63,6 +73,22 @@ public class OrganizationAppService(
     {
         var selectedOrg = await organizationRepository.GetAsync(x => x.Name == name);
         return ObjectMapper.Map<Organization, OrganizationProfileDto>(selectedOrg);
+    }
+
+    public async Task<ListResultDto<OrganizationInListDto>> GetOrganizationsByUserIdAsync(Guid userId)
+    {
+        //If you want to make it more flaxable with more paging, join, and more,
+        //use (GetQueryableAsync).
+        var organizationsList = await organizationRepository.GetListAsync(x => x.OwnerUserId == userId);
+        var orgInListDtos = ObjectMapper.Map<List<Organization>, List<OrganizationInListDto>>(organizationsList);
+        
+        return new ListResultDto<OrganizationInListDto>(orgInListDtos);
+    }
+
+    public async Task<bool> IsOrganizationOwnerAsync(Guid organizationId)
+    {
+        return CurrentUser.Id.HasValue && await organizationRepository.AnyAsync(
+            o => o.Id == organizationId && o.OwnerUserId == CurrentUser.GetId()); 
     }
 
     public async Task UpdateAsync(Guid id, UpdateOrganizationDto input)

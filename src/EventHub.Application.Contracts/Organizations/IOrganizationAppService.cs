@@ -14,6 +14,11 @@ public interface IOrganizationAppService : IApplicationService
     Task<ListResultDto<OrganizationDto>> GetAllAsync();
     
     Task<OrganizationProfileDto> GetOrganizationProfileAsync(string name);
+    
+    Task<ListResultDto<OrganizationInListDto>> GetOrganizationsByUserIdAsync(Guid userId);
+    
+    Task<bool> IsOrganizationOwnerAsync(Guid organizationId);
 
     Task UpdateAsync(Guid id, UpdateOrganizationDto input);
+    
 }
