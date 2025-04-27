@@ -26,14 +26,16 @@ public class Organization : FullAuditedAggregateRoot<Guid>
     public string? InstagramUsername { get; set; }
 
     public string? MediumUsername { get; set; }
+
+    public int MemberCount { get; internal set; }
     
     public OrganizationPlanType PlanType { get; private set; }
-    
+
     public DateTime? PaidEnrollmentEndDate { get; private set; }
     
-    public DateTime TrialPeriod { get; private set; }
-
-    protected Organization()
+    public bool IsSendPaidEnrollmentReminderEmail { get; set; }
+    
+    private Organization()
     {
         //Required by EF Core
     }
@@ -41,18 +43,11 @@ public class Organization : FullAuditedAggregateRoot<Guid>
     internal Organization(Guid id, Guid ownerUserId, string name, string displayName, string description) 
         : base(id)
     {
-        SetOwnerUserId(ownerUserId);
+        OwnerUserId = ownerUserId;
         SetName(name);
         SetDisplayName(displayName);
         SetDescription(description);
         SetFreeToPlanType();
-        SetTryDate();
-    }
-
-    internal Organization SetOwnerUserId(Guid ownerUserId)
-    {
-        OwnerUserId = Check.NotNull(ownerUserId, nameof(ownerUserId));
-        return this;
     }
     
     internal Organization SetName(string name)
@@ -85,6 +80,13 @@ public class Organization : FullAuditedAggregateRoot<Guid>
         return this;
     }
 
+    internal Organization UpgradeToPlanType(OrganizationPlanType planType, DateTime endDate)
+    {
+        SetPlanType(planType, endDate);
+        
+        return this;
+    }
+
     private Organization SetPlanType(OrganizationPlanType planType, DateTime? endDate = null)
     {
         if (!Enum.IsDefined(typeof(OrganizationPlanType), planType))
@@ -100,18 +102,6 @@ public class Organization : FullAuditedAggregateRoot<Guid>
         PlanType = planType;
         PaidEnrollmentEndDate = endDate;
         
-        return this;
-    }
-
-    private Organization SetTryDate()
-    {
-        TrialPeriod = DateTime.Now;
-        if (PlanType == OrganizationPlanType.Free)
-        {
-            TrialPeriod = TrialPeriod.AddDays(OrganizationConsts.MaxFreeTrialDays);
-        }
-        
-        TrialPeriod = TrialPeriod.AddDays(OrganizationConsts.MaxPremiumTrialDays);
         return this;
     }
 }

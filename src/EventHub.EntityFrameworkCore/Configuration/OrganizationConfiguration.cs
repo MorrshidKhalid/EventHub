@@ -2,6 +2,7 @@ using EventHub.Organizations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Volo.Abp.EntityFrameworkCore.Modeling;
+using Volo.Abp.Identity;
 
 namespace EventHub.Configuration;
 
@@ -11,8 +12,8 @@ public class OrganizationConfiguration : IEntityTypeConfiguration<Organization>
     {
         builder.ConfigureByConvention();
         
-        builder.Property(x => x.OwnerUserId)
-            .IsRequired();
+        builder.HasOne<IdentityUser>().WithMany()
+            .HasForeignKey(x => x.OwnerUserId).IsRequired().OnDelete(DeleteBehavior.NoAction);
         
         builder.Property(x => x.Name)
             .IsRequired()
@@ -49,6 +50,12 @@ public class OrganizationConfiguration : IEntityTypeConfiguration<Organization>
         builder.Property(x => x.MediumUsername)
             .IsRequired(false)
             .HasMaxLength(OrganizationConsts.MaxMediumUsernameLength);
+
+        builder.Property(x => x.MemberCount)
+            .IsRequired();
+
+        builder.Property(x => x.IsSendPaidEnrollmentReminderEmail)
+            .IsRequired();
 
         builder.ToTable("Organization");
 

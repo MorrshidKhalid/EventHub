@@ -1,5 +1,6 @@
 using EventHub.Configuration;
 using EventHub.Organizations;
+using EventHub.Organizations.Memberships;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -27,6 +28,7 @@ public class EventHubDbContext :
     IIdentityDbContext
 {
     public DbSet<Organization> Organizations { get; set; }
+    public DbSet<OrganizationMembership> OrganizationMemberships { get; set; }
 
 
     #region Entities from the modules
@@ -81,5 +83,6 @@ public class EventHubDbContext :
         builder.ConfigureBlobStoring();
 
         builder.ApplyConfiguration(new OrganizationConfiguration());
+        builder.ApplyConfiguration(new OrganizationMembershipConfiguration());
     }
 }

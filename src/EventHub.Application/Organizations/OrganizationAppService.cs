@@ -28,7 +28,7 @@ public class OrganizationAppService(
         org.InstagramUsername = input.InstagramUsername;
         org.MediumUsername = input.MediumUsername;
 
-        await organizationRepository.InsertAsync(org);
+        await organizationRepository.InsertAsync(org, autoSave: true);
         
         return ObjectMapper.Map<Organization, OrganizationDto>(org);
     }
@@ -38,9 +38,10 @@ public class OrganizationAppService(
         var orgQueryable = await organizationRepository.GetQueryableAsync();
 
         var query = orgQueryable;
+        
         if (input.RegisteredUserId.HasValue)
         {
-            query = orgQueryable.Where(x => x.OwnerUserId == input.RegisteredUserId);
+            //var registeredOrganizations = 
         }
         
         var count = await AsyncExecuter.CountAsync(query);
