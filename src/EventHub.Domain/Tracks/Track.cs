@@ -12,6 +12,15 @@ public class Track : Entity<Guid>
     public string Name { get; private set; }
     public ICollection<Session> Sessions { get; private set; }
 
+    public Track(
+        Guid id,
+        Guid eventId,
+        string name) 
+        : base(id)
+    {
+        EventId = eventId;
+        Name = name;
+    }
 
     public Track AddSession()
     {

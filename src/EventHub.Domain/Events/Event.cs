@@ -108,15 +108,15 @@ public class Event : FullAuditedAggregateRoot<Guid>
         return this;
     }
 
-    public Event AddTrack(Track track)
+    public Event AddTrack(Guid trackId, string name)
     {
-        if (Tracks.Any(x => x.Name == track.Name))
+        if (Tracks.Any(x => x.Name == name))
         {
             new HandleGlobalException(new TrackException()).GenerateExceptionCode(
-                EventHubDomainErrorCodes.TrackNameAlreadyExist, track.Name);
+                EventHubDomainErrorCodes.TrackNameAlreadyExist, name);
         }
         
-        
+        Tracks.Add(new Track(trackId, Id, name));
         return this;
     }
     
