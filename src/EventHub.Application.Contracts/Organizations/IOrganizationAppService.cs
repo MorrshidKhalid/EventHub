@@ -11,7 +11,7 @@ public interface IOrganizationAppService : IApplicationService
     
     Task<PagedResultDto<OrganizationInListDto>> GetListAsync(OrganizationInListFilterDto input);
     
-    Task<ListResultDto<OrganizationDto>> GetAllAsync();
+    // Task<ListResultDto<OrganizationDto>> GetAllAsync();
     
     Task<OrganizationProfileDto> GetOrganizationProfileAsync(string name);
     

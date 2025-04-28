@@ -52,10 +52,11 @@ public class OrganizationConfiguration : IEntityTypeConfiguration<Organization>
             .HasMaxLength(OrganizationConsts.MaxMediumUsernameLength);
 
         builder.Property(x => x.MemberCount)
+            .HasDefaultValue(0)
             .IsRequired();
 
         builder.Property(x => x.IsSendPaidEnrollmentReminderEmail)
-            .IsRequired();
+            .HasDefaultValue(false);
 
         builder.ToTable("Organization");
 

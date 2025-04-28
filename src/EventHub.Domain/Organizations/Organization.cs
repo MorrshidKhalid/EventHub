@@ -48,17 +48,19 @@ public class Organization : FullAuditedAggregateRoot<Guid>
         SetDisplayName(displayName);
         SetDescription(description);
         SetFreeToPlanType();
+        MemberCount = 0;
     }
     
     internal Organization SetName(string name)
     {
-        Name = Check.NotNullOrWhiteSpace(name, nameof(Name), OrganizationConsts.MinNameLength, OrganizationConsts.MaxNameLength);
+        Name = Check.NotNullOrWhiteSpace(name, nameof(Name), OrganizationConsts.MaxNameLength, OrganizationConsts.MinNameLength);
         return this;
     }
     
     public Organization SetDisplayName(string displayName)
     {
         DisplayName = Check.NotNullOrWhiteSpace(displayName, nameof(DisplayName), OrganizationConsts.MaxDisplayNameLength, OrganizationConsts.MinDisplayNameLength);
+        AddLocalEvent(new DisplayNameChangedEvent(this));
         return this;
     }
     
