@@ -1,6 +1,9 @@
 using EventHub.Configuration;
+using EventHub.Countries;
+using EventHub.Events;
 using EventHub.Organizations;
 using EventHub.Organizations.Memberships;
+using EventHubuilder.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -11,9 +14,9 @@ using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.FeatureManagement.EntityFrameworkCore;
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.EntityFrameworkCore;
+using Volo.Abp.OpenIddict.EntityFrameworkCore;
 using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
-using Volo.Abp.OpenIddict.EntityFrameworkCore;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
 
@@ -29,6 +32,8 @@ public class EventHubDbContext :
 {
     public DbSet<Organization> Organizations { get; set; }
     public DbSet<OrganizationMembership> OrganizationMemberships { get; set; }
+    public DbSet<Event> Events { get; set; }
+    public DbSet<Country> Countries { get; set; }
 
 
     #region Entities from the modules
@@ -84,5 +89,10 @@ public class EventHubDbContext :
 
         builder.ApplyConfiguration(new OrganizationConfiguration());
         builder.ApplyConfiguration(new OrganizationMembershipConfiguration());
+        builder.ApplyConfiguration(new EventConfiguration());
+        builder.ApplyConfiguration(new CountryConfiguration());
+        builder.ApplyConfiguration(new TrackConfiguration());
+        builder.ApplyConfiguration(new SessionConfiguration());
+        builder.ApplyConfiguration(new SpeakerConfiguration());
     }
 }

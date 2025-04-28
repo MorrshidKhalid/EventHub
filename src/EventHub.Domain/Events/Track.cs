@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using EventHub.Events;
-using EventHub.Sessions;
 using Volo.Abp.Domain.Entities;
 
 namespace EventHub.Tracks;
@@ -22,13 +21,30 @@ public class Track : Entity<Guid>
         Name = name;
     }
 
-    public Track AddSession()
+    public Track AddSession(Guid sessionId, string title, string description, DateTime startTime, DateTime endTime, string language, ICollection<Guid> speakerUserIds)
     {
 
         return this;
     }
 
     public void SetName(string name)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void UpdateSession(
+        Guid sessionId,
+        string title,
+        string description,
+        DateTime startTime,
+        DateTime endTime,
+        string language,
+        ICollection<Guid> speakerUserIds)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void RemoveSession(Guid sessionId)
     {
         throw new NotImplementedException();
     }

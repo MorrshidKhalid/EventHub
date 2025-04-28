@@ -1,9 +1,9 @@
 using System;
 using Volo.Abp.Domain.Entities;
 
-namespace EventHub.Speakers;
+namespace EventHub.Events;
 
-public class Speaker : Entity
+public class Speaker : Entity<Guid>
 {
     public Guid SessionId { get; private set; }
     public Guid UserId { get; private set; }

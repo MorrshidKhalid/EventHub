@@ -133,10 +133,75 @@ public class Event : FullAuditedAggregateRoot<Guid>
         {
             new HandleGlobalException(new TrackException()).GenerateExceptionCode(
                 EventHubDomainErrorCodes.TrackNotFound, trackId.ToString());
+            
         }
         
         track.SetName(name);
 
+        return this;
+    }
+
+    public Event RemoveTrack(Guid trackId)
+    {
+        var track = Tracks.SingleOrDefault(x => x.Id == trackId);
+        
+        if (track is null)
+        {
+            new HandleGlobalException(new TrackException())
+                .GenerateExceptionCode(EventHubDomainErrorCodes.TrackNotFound, trackId.ToString());
+        }
+        
+        Tracks.Remove(track);
+        
+        return this;
+    }
+
+    public Event AddSession(
+        Guid trackId,
+        Guid sessionId,
+        string title,
+        string description,
+        DateTime startTime, 
+        DateTime endTime,
+        string language,
+        ICollection<Guid> speakerUserIds)
+    {
+        CheckIfValidSessionTime(startTime, endTime);
+        
+        var track = GetTrack(trackId);
+        track.AddSession(sessionId, title, description,startTime, endTime, language, speakerUserIds);
+
+        return this;
+    }
+
+    public Event UpdateSession(
+        Guid trackId,
+        Guid sessionId,
+        string title,
+        string description,
+        DateTime startTime,
+        DateTime endTime,
+        string language,
+        ICollection<Guid> speakerUserIds)
+    {
+        CheckIfValidSessionTime(startTime, endTime);
+        
+        var track = GetTrack(trackId);
+        track.UpdateSession(sessionId, title, description, startTime, endTime, language, speakerUserIds);
+        return this;
+    }
+
+    public Event RemoveSession(Guid trackId, Guid sessionId)
+    {
+        var track = Tracks.SingleOrDefault(x => x.Id == trackId);
+
+        if (track is null)
+        {
+            new HandleGlobalException(new TrackException()).GenerateExceptionCode(
+                EventHubDomainErrorCodes.TrackNotFound, sessionId.ToString());
+        }
+
+        track.RemoveSession(sessionId);
         return this;
     }
     
@@ -149,7 +214,7 @@ public class Event : FullAuditedAggregateRoot<Guid>
 
     public bool IsLive(DateTime now) => now.IsBetween(StartTime, EndTime);
 
-    private Track GetTracks(Guid trackId)
+    private Track GetTrack(Guid trackId)
     {
         return Tracks.FirstOrDefault(t => t.Id == trackId) 
                ?? throw new EntityNotFoundException(typeof(Track), trackId);
@@ -165,11 +230,6 @@ public class Event : FullAuditedAggregateRoot<Guid>
         }
     }
     
-    //AddTrack
-    
-    //UpdateTrack
-    
-    //RemoveTrack
     
     //AddSession
     
