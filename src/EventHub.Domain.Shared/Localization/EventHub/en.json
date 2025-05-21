@@ -1,0 +1,22 @@
+{
+  "Culture": "en",
+  "Texts": {
+    "AppName": "EventHub",
+    "Menu:Home": "Home",
+    "LongWelcomeMessage": "Welcome to the application. This is a startup project based on the ABP framework. For more information visit",
+    "Welcome": "Welcome",
+    "EventHub:EndTimeCantBeEarlierThanStartTime": "Event end time can not be earlier than the start time.",
+    "EventHub:OrganizationNameAlreadyExists": "This organization name is already exists.",
+    "EventHub:SessionTimeShouldBeInTheEventTime": "Session time should be in the event time!",
+    "EventHub:TrackNameAlreadyExists": "Track name already exists!",
+    "EventHub:TrackNotFound": "Track Not Found!",
+    "EventHub:NotAuthorizedToUpdateOrganizationProfile": "User not authorized to update organization profile!",
+    "EventHubNotAuthorizedToCreateEventInThisOrganization": "You are not authorized to create events for the organization {0}.",
+    "Permission:EventHubGroup": "EventHub",
+    "Permission:EventHubOrganizationParent": "Organization management",
+    "Permission:EventHubRead": "Read",
+    "Permission:EventHubCreate": "Create",
+    "Permission:EventHubUpdate": "Update",
+    "Permission:EventHubDelete": "Delete"
+  }
+}
